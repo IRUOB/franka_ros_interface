@@ -1,18 +1,18 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # /***************************************************************************
 
-# 
+#
 # @package: franka_interface
 # @metapackage: franka_ros_interface
 # @author: Saif Sidhik <sxs1412@bham.ac.uk>
-# 
+#
 
 # **************************************************************************/
 
 # /***************************************************************************
 # Copyright (c) 2019-2021, Saif Sidhik
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -28,7 +28,7 @@
 
 
 """
-:info: 
+:info:
    commands robot to move to neutral pose
 
 """

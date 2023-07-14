@@ -1,16 +1,16 @@
 # /***************************************************************************
 
-# 
+#
 # @package: franka_moveit
 # @metapackage: franka_ros_interface
 # @author: Saif Sidhik <sxs1412@bham.ac.uk>
-# 
+#
 
 # **************************************************************************/
 
 # /***************************************************************************
 # Copyright (c) 2019-2021, Saif Sidhik
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -28,7 +28,7 @@ import moveit_commander
 
 class ExtendedPlanningSceneInterface(moveit_commander.PlanningSceneInterface):
     """
-    .. note:: For other available methods for planning scene interface, refer `PlanningSceneInterface <http://docs.ros.org/indigo/api/moveit_ros_planning_interface/html/classmoveit_1_1planning__interface_1_1PlanningSceneInterface.html>`_.
+    .. note:: For other available methods for planning scene interface, refer `PlanningSceneInterface <http://docs.ros.org/noetic/api/moveit_ros_planning_interface/html/classmoveit_1_1planning__interface_1_1PlanningSceneInterface.html>`_.
     """
     def __init__(self):
 
@@ -42,7 +42,7 @@ class ExtendedPlanningSceneInterface(moveit_commander.PlanningSceneInterface):
         :param name: name of object
         :param pose: desired pose for the box (Use :py:func:`franka_moveit.utils.create_pose_stamped_msg`)
         :param size: size of the box
-        :param timeout: time in sec to wait while checking if box is created 
+        :param timeout: time in sec to wait while checking if box is created
 
         :type name: str
         :type pose: geometry_msgs.msg.PoseStamped
@@ -76,7 +76,7 @@ class ExtendedPlanningSceneInterface(moveit_commander.PlanningSceneInterface):
         Remove box from scene.
 
         :param box_name: name of object
-        :param timeout: time in sec to wait while checking if box is created 
+        :param timeout: time in sec to wait while checking if box is created
 
         :type box_name: str
         :type timeout: float

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import rospy
@@ -15,7 +15,7 @@ from franka_moveit.utils import create_pose_stamped_msg
 objects = [
            {
            'name': 'box1',
-           'pose': create_pose_stamped_msg(position = [0,0,0], orientation = [1,0,0,0], frame = "world"), 
+           'pose': create_pose_stamped_msg(position = [0,0,0], orientation = [1,0,0,0], frame = "world"),
            'size': [0.1,0.1,0.1]
            } ,
            {
@@ -38,16 +38,16 @@ def main():
   rospy.sleep(5.)
   try:
     input("============ Press `Enter` to begin the tutorial by setting up the scene_interface (press ctrl-d to exit) ...")
-    
+
     scene = ExtendedPlanningSceneInterface()
 
     input("============ Press `Enter` to add objects to the planning scene ...")
-    
+
     for config in objects:
         scene.add_box(**config)
 
     input("============ Press `Enter` to remove the boxes from the planning scene ...")
-    
+
     for config in objects:
         scene.remove_box(config['name'])
 
@@ -63,4 +63,3 @@ if __name__ == '__main__':
     moveit_commander.roscpp_initialize(sys.argv)
 
     main()
-

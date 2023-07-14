@@ -125,7 +125,7 @@ endif()
 
 
 catkin_python_setup()
-catkin_install_python(PROGRAMS scripts/enable_robot.py 
+catkin_install_python(PROGRAMS scripts/enable_robot.py
                                scripts/move_to_neutral.py
                                scripts/simple_gripper.py
                                tests/demo_joint_positions_keyboard.py

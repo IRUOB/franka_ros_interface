@@ -1,18 +1,18 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # /***************************************************************************
 
-# 
+#
 # @package: franka_interface
 # @metapackage: franka_ros_interface
 # @author: Saif Sidhik <sxs1412@bham.ac.uk>
-# 
+#
 
 # **************************************************************************/
 
 # /***************************************************************************
 # Copyright (c) 2019-2021, Saif Sidhik
- 
+
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -28,8 +28,8 @@
 
 
 """
-:info: 
-   NOTE: Running this script without any arguments will stop the current command being 
+:info:
+   NOTE: Running this script without any arguments will stop the current command being
          sent to the gripper. Use this to stop any dangerous action being run
    Utility script for simple gripper motion.
      Usage:
@@ -37,8 +37,8 @@
 
      @Args:
          <No arg>          : Stop current gripper action
-         -o (--open)       : optional argument to make the gripper release and go to max width 
-         -c (--close)      : optional argument to close the gripper 
+         -o (--open)       : optional argument to make the gripper release and go to max width
+         -c (--close)      : optional argument to close the gripper
 
 """
 
@@ -60,7 +60,7 @@ def _done_cb(status, result):
     rospy.loginfo("GripperInterface: '{}' complete. Result: \n\t{}".format(_caller, result))
 
 if __name__ == '__main__':
-    
+
     rospy.init_node("gripper_stop_node")
 
     _caller = "stop_gripper"
