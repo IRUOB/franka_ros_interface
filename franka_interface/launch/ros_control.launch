@@ -51,26 +51,6 @@
     <param name="publish_frequency" value="$(arg rate)"/>
   </node>
 
-  <!-- Start the custom state publisher for franka_ros_interface -->
-  <rosparam command="load" file="$(find franka_interface)/config/basic_controllers.yaml"/>
-  <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="franka_ros_interface/custom_franka_state_controller" />
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen">
-    <param name="publish_frequency" value="$(arg rate)"/>
-  </node>
-
-  <!-- Start joint_state_publisher with the joint states of the robot -->
-  <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
-    <rosparam if="$(arg load_gripper)" param="source_list">[franka_ros_interface/custom_franka_state_controller/joint_states, franka_gripper/joint_states] </rosparam>
-    <rosparam unless="$(arg load_gripper)" param="source_list">[franka_ros_interface/custom_franka_state_controller/joint_states] </rosparam>
-    <param name="rate" value="$(arg rate)"/>
-  </node>
-  <node name="joint_state_desired_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
-    <rosparam if="$(arg load_gripper)" param="source_list">[franka_ros_interface/custom_franka_state_controller/joint_states_desired, franka_gripper/joint_states] </rosparam>
-    <rosparam unless="$(arg load_gripper)" param="source_list">[franka_ros_interface/custom_franka_state_controller/joint_states_desired] </rosparam>
-    <param name="rate" value="$(arg rate)"/>
-    <remap from="/joint_states" to="/joint_states_desired" />
-  </node>
-
   <!-- If needed, broadcast static tf for robot root -->
   <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 world $(arg arm_id)_link0" />
   <node pkg="tf" type="static_transform_publisher" name="base_to_link0" args="0 0 0 0 0 0 1 base panda_link0 100" />
@@ -90,21 +70,45 @@
                                            franka_ros_interface/position_joint_position_controller"/>
   </group>
 
-  <!-- <group if="$(eval arg('moveit_controller_manager') == 'fake')"> -->
+  <group if="$(eval arg('moveit_controller_manager') != 'fake')">
+
+    <!-- Start the custom state publisher for franka_ros_interface -->
+    <rosparam command="load" file="$(find franka_interface)/config/basic_controllers.yaml"/>
+    <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="franka_ros_interface/custom_franka_state_controller" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen">
+      <param name="publish_frequency" value="$(arg rate)"/>
+    </node>
+
+    <!-- Start joint_state_publisher with the joint states of the robot -->
+    <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+      <rosparam if="$(arg load_gripper)" param="source_list">[franka_ros_interface/custom_franka_state_controller/joint_states, franka_gripper/joint_states] </rosparam>
+      <rosparam unless="$(arg load_gripper)" param="source_list">[franka_ros_interface/custom_franka_state_controller/joint_states] </rosparam>
+      <param name="rate" value="$(arg rate)"/>
+    </node>
+    <node name="joint_state_desired_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+      <rosparam if="$(arg load_gripper)" param="source_list">[franka_ros_interface/custom_franka_state_controller/joint_states_desired, franka_gripper/joint_states] </rosparam>
+      <rosparam unless="$(arg load_gripper)" param="source_list">[franka_ros_interface/custom_franka_state_controller/joint_states_desired] </rosparam>
+      <param name="rate" value="$(arg rate)"/>
+      <remap from="/joint_states" to="/joint_states_desired" />
+    </node>
+
+  </group>
+
+  <group if="$(eval arg('moveit_controller_manager') == 'fake')">
     <!-- We do not have a real robot connected, so publish fake joint states via a joint_state_publisher
          MoveIt's fake controller's joint states are considered via the 'source_list' parameter -->
-    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" unless="$(arg use_gui)"> -->
-      <!-- <rosparam param="source_list">[move_group/fake_controller_joint_states]</rosparam> -->
-    <!-- </node> -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" unless="$(arg use_gui)">
+      <rosparam param="source_list">[move_group/fake_controller_joint_states]</rosparam>
+    </node>
     <!-- If desired, a GUI version is available allowing to move the simulated robot around manually
          This corresponds to moving around the real robot without the use of MoveIt. -->
-    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" if="$(arg use_gui)"> -->
-      <!-- <rosparam param="source_list">[move_group/fake_controller_joint_states]</rosparam> -->
-    <!-- </node> -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" if="$(arg use_gui)">
+      <rosparam param="source_list">[move_group/fake_controller_joint_states]</rosparam>
+    </node>
 
     <!-- Given the published joint states, publish tf for the robot links -->
-    <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" /> -->
-  <!-- </group> -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+  </group>
 
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find panda_moveit_config)/launch/move_group.launch" pass_all_args="true">
