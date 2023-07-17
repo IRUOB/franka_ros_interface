@@ -51,31 +51,12 @@
     <param name="publish_frequency" value="$(arg rate)"/>
   </node>
 
-  <!-- If needed, broadcast static tf for robot root -->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 world $(arg arm_id)_link0" />
-  <node pkg="tf" type="static_transform_publisher" name="base_to_link0" args="0 0 0 0 0 0 1 base panda_link0 100" />
-  <node pkg="tf" type="static_transform_publisher" name="world_to_base" args="0 0 0 0 0 0 1 world base 100" />
-
-
-  <node name="controllers" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="position_joint_trajectory_controller"/>
-
-  <!-- Load the custom controllers -->
-  <group if="$(eval arg('start_controllers') == true)">
-    <node name="load_controllers" pkg="controller_manager" type="controller_manager" respawn="false"
-                      output="screen" args="load
-                                           franka_ros_interface/effort_joint_impedance_controller
-                                           franka_ros_interface/effort_joint_position_controller
-                                           franka_ros_interface/effort_joint_torque_controller
-                                           franka_ros_interface/velocity_joint_velocity_controller
-                                           franka_ros_interface/position_joint_position_controller"/>
-  </group>
-
   <group if="$(eval arg('moveit_controller_manager') != 'fake')">
 
     <!-- Start the custom state publisher for franka_ros_interface -->
     <rosparam command="load" file="$(find franka_interface)/config/basic_controllers.yaml"/>
     <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="franka_ros_interface/custom_franka_state_controller" />
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen">
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen"  >
       <param name="publish_frequency" value="$(arg rate)"/>
     </node>
 
@@ -109,6 +90,27 @@
     <!-- Given the published joint states, publish tf for the robot links -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
   </group>
+
+
+  <!-- If needed, broadcast static tf for robot root -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 world $(arg arm_id)_link0" />
+  <node pkg="tf" type="static_transform_publisher" name="base_to_link0" args="0 0 0 0 0 0 1 base panda_link0 100" />
+  <node pkg="tf" type="static_transform_publisher" name="world_to_base" args="0 0 0 0 0 0 1 world base 100" />
+
+
+  <node name="controllers" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="position_joint_trajectory_controller"/>
+
+  <!-- Load the custom controllers -->
+  <group if="$(eval arg('start_controllers') == true)">
+    <node name="load_controllers" pkg="controller_manager" type="controller_manager" respawn="false"
+                      output="screen" args="load
+                                           franka_ros_interface/effort_joint_impedance_controller
+                                           franka_ros_interface/effort_joint_position_controller
+                                           franka_ros_interface/effort_joint_torque_controller
+                                           franka_ros_interface/velocity_joint_velocity_controller
+                                           franka_ros_interface/position_joint_position_controller"/>
+  </group>
+
 
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find panda_moveit_config)/launch/move_group.launch" pass_all_args="true">
